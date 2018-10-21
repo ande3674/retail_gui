@@ -15,6 +15,8 @@ public class ItemDatabase {
     private static final String INSERT_PREP_STATEMENT = "INSERT INTO items (description, quantity, price) VALUES (?, ?, ?)";
     // SQL Statements - UPDATE
     private static final String UPDATE_ITEM_BY_ID = "UPDATE items SET quantity=%d WHERE id=%d";
+    // SQL Statements - DELETE
+    private static final String DELETE_ITEM_BY_ID = "DELETE FROM items WHERE id=%d";
     // Constructor
     ItemDatabase(){}
 
@@ -41,6 +43,20 @@ public class ItemDatabase {
             // Build the SQL statement and execute it
             String SQL_UPDATE = String.format(UPDATE_ITEM_BY_ID, new_quantity, id);
             statement.executeUpdate(SQL_UPDATE);
+            statement.close();
+
+            return 1;
+        }catch (SQLException sqle){
+            return -1;
+        }
+    }
+    // Delete an item from the database
+    public int deleteItem(int id){
+        try (Connection conn = DriverManager.getConnection(CONNECTION_URL);
+             Statement statement = conn.createStatement()) {
+            // Build the SQL statement and execute it
+            String SQL_DELETE = String.format(DELETE_ITEM_BY_ID, id);
+            statement.executeUpdate(SQL_DELETE);
             statement.close();
 
             return 1;
