@@ -33,7 +33,12 @@ public class EditInventoryGUI extends JDialog {
                 AddNewItemGUI anigui = new AddNewItemGUI(db);
             }
         });
-
+        updateItemButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                UpdateItemGUI uigui = new UpdateItemGUI(db);
+            }
+        });
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
