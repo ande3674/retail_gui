@@ -11,6 +11,7 @@ public class ItemDatabase {
     private static final String PRICE_COLUMN = "price";
     // SQL Statements - SELECT
     private static final String SELECT_BY_ID = "SELECT * FROM items WHERE " + ID_COLUMN + " IS ";
+    private static final String SELECT_ALL = "SELECT * FROM items";
     // SQL Statements - INSERT
     private static final String INSERT_PREP_STATEMENT = "INSERT INTO items (description, quantity, price) VALUES (?, ?, ?)";
     // SQL Statements - UPDATE
@@ -81,10 +82,39 @@ public class ItemDatabase {
 
             v.add(id); v.add(desc); v.add(quantity); v.add(price);
 
-
             rs.close();
 
             return v;
+        } catch (SQLException sqle){
+            return null;
+        }
+    }
+    // Get all items
+    public Vector<Vector> getAllItems(){
+        try (Connection conn = DriverManager.getConnection(CONNECTION_URL);
+             Statement statement = conn.createStatement()){
+            ResultSet rs = statement.executeQuery(SELECT_ALL);
+
+            Vector<Vector> vectors = new Vector<>();
+            String desc;
+            int id, quantity;
+            float price;
+
+            while (rs.next()) {
+                id = rs.getInt(ID_COLUMN);
+                desc = rs.getString(DESCRIPTION_COLUMN);
+                quantity = rs.getInt(QUANTITY_COLUMN);
+                price = rs.getFloat(PRICE_COLUMN);
+
+                Vector v = new Vector();
+
+                v.add(id); v.add(desc); v.add(quantity); v.add(price);
+
+                vectors.add(v);
+            }
+            rs.close();
+
+            return vectors;
         } catch (SQLException sqle){
             return null;
         }

@@ -13,17 +13,23 @@ public class OpenCashierGUI extends JDialog{
     private JButton cancelButton;
     private JButton addButton;
     private JPanel mainPanel;
+    private JTextArea receiptTextArea;
+    private JButton seeAllItemsButton;
 
     private ItemDatabase db;
+
+    private String RECEIPT_ITEM_TEMPLATE = "%d x %ss: $%.2f\n";
 
     // Variables to keep track of cashier info
     private TreeMap<Integer, Integer> receipt; //Keys: id of item, Value: quantity left after purchase
     private float totalPrice; // running total of the sale price
+    private String receiptInformation;
 
     protected OpenCashierGUI(ItemDatabase db){
         this.db = db;
         this.receipt = new TreeMap();
         this.totalPrice = (float)0.0;
+        this.receiptInformation = "";
         // Regular setup stuff
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setContentPane(mainPanel);
@@ -64,11 +70,16 @@ public class OpenCashierGUI extends JDialog{
                         // Add information to the "receipt" data structure
                         receipt.put(id, quantity-quantity_desired);
                         // Update the text field(s)
-                        totalTextField.setText("$"+totalPrice);
+                        itemNumberTextField.setText("");
+                        quantityTextField.setText("");
+                        totalTextField.setText(String.format("$%.2f", totalPrice));
+                        //receiptItemTemplate = "%d x %ss: $%.2f\n"
+                        receiptInformation += String.format(RECEIPT_ITEM_TEMPLATE, quantity_desired, desc, quantity_desired * price);
+                        receiptTextArea.setText(receiptInformation);
                     }
 
                 } catch (Exception ex){
-                    // Do something...
+                    // TODO Do something...
                 }
             }
         });
@@ -79,14 +90,46 @@ public class OpenCashierGUI extends JDialog{
                 for (int k : receipt.keySet()){
                     db.updateItemQuantity(k, receipt.get(k));
                 }
+                // display some sort of message
+                String message = String.format("Thank you, your purchase was successful!\n%s\nSale total: $%.2f", receiptInformation, totalPrice);
+                JOptionPane.showMessageDialog(OpenCashierGUI.this, message);
                 // reset variables
                 receipt.clear();
                 totalPrice = (float)0.0;
+                receiptInformation = "";
                 // hide frame
                 setVisible(false);
-                // TODO display some sort of message
             }
         });
-
+        seeAllItemsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Get all items in inventory
+                Vector<Vector> vectors = db.getAllItems();
+                // Build message string
+                String message = "";
+                String template = "Item Number: %d, Name: %s, Quantity: %d, Price: %.2f\n";
+                for (Vector v : vectors){
+                    // id, description, quantity, price
+                    int id = (int)v.get(0);
+                    String desc = (String)v.get(1);
+                    int quantity = (int)v.get(2);
+                    float price = (float)v.get(3);
+                    message += String.format(template, id, desc, quantity, price);
+                }
+                // show popup with message string
+                JOptionPane.showMessageDialog(OpenCashierGUI.this, message);
+            }
+        });
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (JOptionPane.showConfirmDialog(OpenCashierGUI.this,
+                        "Exit this screen?", "Exit",
+                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+                    setVisible(false);
+                }
+            }
+        });
     }
 }
