@@ -79,7 +79,7 @@ public class OpenCashierGUI extends JDialog{
                     }
 
                 } catch (Exception ex){
-                    // TODO Do something...
+                    JOptionPane.showMessageDialog(OpenCashierGUI.this, "There was an error.");
                 }
             }
         });
