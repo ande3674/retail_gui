@@ -32,6 +32,34 @@
             <version>3.21.0</version>
         </dependency>
 
+        <!-- JUnit is for running tests on your code. -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- EasyMock is a mocking framework. PowerMock is an extension that works with EasyMock.
+        Used for creating pretend objects that we can pre-configure their behavior and return values, useful in testing to avoid having to completely set up a program -->
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>3.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>1.6.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-easymock</artifactId>
+            <version>1.6.4</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 
